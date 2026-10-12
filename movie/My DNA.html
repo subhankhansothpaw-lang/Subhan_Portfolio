@@ -1,0 +1,256 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#080b10">
+<title>Movie Battle</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=Libre+Franklin:wght@400;500&display=swap">
+<style>
+:root{--bg:#080b10;--ink:#e9ecef;--mute:#9aa4ad;--sig:#f2c230;--line:#2a323c;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font:400 17px/1.6 "Libre Franklin",system-ui,sans-serif}
+#bg{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}
+.veil{position:fixed;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(8,11,16,.63),rgba(8,11,16,.83) 58%,rgba(8,11,16,.97))}
+header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;padding:20px clamp(20px,5vw,64px)}
+header b{font:900 22px "Big Shoulders Display",sans-serif;letter-spacing:.04em}
+nav{display:flex;flex-wrap:wrap;gap:6px 22px}
+nav a{color:var(--ink);text-decoration:none;font-size:15px}
+nav a:hover,nav a:focus-visible{color:var(--sig);outline:none}
+.hero{min-height:39vh;display:flex;flex-direction:column;justify-content:center;padding:30px clamp(20px,5vw,64px)}
+.eyebrow{color:var(--sig);font-size:12px;font-weight:500;letter-spacing:.2em;text-transform:uppercase}
+h1,h2,h3{font-family:"Big Shoulders Display",Impact,sans-serif;text-transform:uppercase}
+.hero h1{font-size:clamp(64px,13vw,150px);line-height:.85;margin:14px 0 8px;letter-spacing:-.01em}
+.hero p{max-width:48ch;color:var(--mute);font-size:18px;margin:14px 0 0}
+main{padding:20px clamp(20px,5vw,64px) 80px;max-width:1600px;margin:auto}
+.title-row{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:24px}
+h2{font-size:clamp(34px,5vw,56px);line-height:1;margin:0}
+.round{color:var(--mute);font-size:13px;letter-spacing:.12em;text-transform:uppercase}
+.arena{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:clamp(12px,3vw,38px);align-items:stretch}
+.fighter{--accent:#ad242b;position:relative;isolation:isolate;min-height:380px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:clamp(22px,4vw,48px);border:1px solid rgba(255,255,255,.16);border-radius:20px;background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 22%,transparent),rgba(8,11,16,.26) 45%,rgba(8,11,16,.96)),radial-gradient(ellipse at 50% 22%,color-mix(in srgb,var(--accent) 60%,transparent),transparent 58%);box-shadow:0 28px 70px rgba(0,0,0,.38);transition:border-color .3s,transform .3s,box-shadow .3s;cursor:pointer}
+.fighter:focus-visible{outline:2px solid #fff;outline-offset:4px}
+.fighter:hover{transform:translateY(-3px)}
+.fighter::before{content:"";position:absolute;inset:0;z-index:-1;opacity:.52;background:repeating-linear-gradient(135deg,transparent 0 22px,rgba(255,255,255,.035) 23px 24px,transparent 25px 48px);mask-image:linear-gradient(180deg,#000,transparent 88%)}
+.fighter-art{position:absolute;inset:0;z-index:-1;width:100%;height:100%;object-fit:cover;opacity:.58;mix-blend-mode:screen;pointer-events:none}
+.fighter[data-side="right"]{--accent:#1769a1}
+.fighter.survivor{border-color:var(--sig);box-shadow:0 0 0 1px var(--sig),0 25px 70px color-mix(in srgb,var(--accent) 30%,transparent)}
+.fighter h3{font-size:clamp(38px,6vw,78px);line-height:.9;margin:0;text-shadow:0 4px 24px #000}
+.fighter .details{color:#d2d8dd;font-size:14px;margin:10px 0 22px}
+.fighter .tag{position:absolute;top:22px;left:24px;color:var(--sig);font-size:11px;font-weight:500;letter-spacing:.18em;text-transform:uppercase}
+.fighter .mark{position:absolute;top:10%;left:50%;transform:translateX(-50%);font:900 clamp(140px,22vw,280px)/1 "Big Shoulders Display",sans-serif;color:rgba(255,255,255,.08);text-shadow:0 18px 45px rgba(0,0,0,.35);pointer-events:none}
+.reset:focus-visible{outline:2px solid #fff;outline-offset:4px}
+.fighter.champion{border-color:var(--sig);box-shadow:0 0 0 2px var(--sig),0 25px 70px color-mix(in srgb,var(--accent) 36%,transparent);cursor:default}
+.versus{align-self:center;color:var(--sig);font:900 clamp(28px,5vw,54px)/1 "Big Shoulders Display",sans-serif;text-shadow:0 0 26px rgba(242,194,48,.42)}
+.result{min-height:32px;text-align:center;color:var(--mute);font-size:14px;margin:22px 0 0}
+.reset{cursor:pointer;border:0;border-bottom:1px solid var(--mute);padding:0;background:transparent;color:var(--mute);font:inherit;font-size:13px;margin-left:8px}
+.reset:hover{color:var(--sig);border-color:var(--sig)}
+.survivors{text-align:center;color:var(--mute);font-size:14px}
+.survivors strong{color:var(--sig);font:900 26px/1 "Big Shoulders Display",sans-serif;padding-right:6px}
+.round-controls{display:flex;justify-content:center;min-height:32px;margin-top:14px}
+.round-controls .reset{font-size:14px}
+.round-controls [hidden]{display:none}
+.taste{max-width:760px;margin:34px auto 0;padding:clamp(22px,4vw,40px);border:1px solid rgba(255,255,255,.14);border-radius:20px;background:linear-gradient(145deg,rgba(14,18,26,.88),rgba(8,11,16,.8));}
+.taste[hidden]{display:none}
+.taste h2{margin-bottom:14px}
+.taste p{color:#d2d8dd;margin:10px 0}
+.taste .caveat{color:var(--mute);font-size:13px;margin-top:20px}
+.arena.final{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.arena.final .fighter{min-height:440px}
+.arena.final .fighter .mark{font-size:clamp(170px,30vw,360px)}
+.arena.final .versus,.arena.final .fighter:not(.champion){display:none}
+.arena.final .fighter.champion{cursor:default}
+footer{padding:28px clamp(20px,5vw,64px);border-top:1px solid var(--line);color:var(--mute);font-size:14px}
+@media(max-width:700px){.hero{min-height:32vh}.arena{grid-template-columns:1fr;gap:14px}.fighter{min-height:300px}.versus{margin:-4px 0;text-align:center}.title-row{align-items:flex-start;flex-direction:column}.taste{margin-top:24px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}}
+header{display:flex!important;flex-wrap:nowrap!important;justify-content:space-between;align-items:center;gap:16px;min-width:0}header>b{flex:0 0 auto;white-space:nowrap;font-size:22px!important}nav{display:flex!important;flex:0 1 auto;flex-wrap:nowrap!important;justify-content:flex-end;align-items:center;gap:8px!important;width:auto!important;min-width:0;overflow-x:auto;scrollbar-width:none}nav::-webkit-scrollbar{display:none}nav a{flex:0 0 auto!important;min-width:0!important;margin:0!important;padding:4px 6px!important;text-align:center!important;font-size:14px!important;line-height:1.4!important;white-space:nowrap!important}@media(max-width:760px){header{flex-direction:row!important;align-items:center!important}}</style>
+<link rel="stylesheet" href="navbar.css">
+</head>
+<body>
+<video id="bg" autoplay muted loop playsinline aria-hidden="true">
+  <source src="images/ANDRESSAN956_ssspin.io_1791721632.mp4" type="video/mp4">
+</video>
+<div class="veil"></div>
+<header>
+  <b>MY DNA</b>
+  <nav aria-label="Main navigation">
+    <a href="Movies (1).html">Movies</a>
+    <a href="Gaming.html">Gaming</a>
+    <a href="Anime.html">Anime</a>
+    <a href="My DNA.html" aria-current="page">My DNA</a>
+    <a href="Login.html">Login / Sign Up</a>
+  </nav>
+</header>
+<section class="hero" id="dna">
+  <span class="eyebrow">The ultimate face-off</span>
+  <h1>Movie<br>Battle</h1>
+  <p>Two worlds enter the arena. Click the movie you want to keep in the battle.</p>
+</section>
+<main>
+  <div class="title-row">
+    <h2>Choose your champion</h2>
+    <span class="round" id="round">Survivor battle · Match 1 of 4</span>
+  </div>
+  <section class="arena" aria-label="Movie matchup">
+    <article class="fighter" data-side="left" role="button" tabindex="0" aria-pressed="false" aria-label="Choose movie">
+      <span class="tag"></span>
+      <span class="mark" aria-hidden="true"></span>
+      <h3></h3>
+      <p class="details"></p>
+    </article>
+    <div class="versus" aria-hidden="true">VS</div>
+    <article class="fighter" data-side="right" role="button" tabindex="0" aria-pressed="false" aria-label="Choose movie">
+      <span class="tag"></span>
+      <span class="mark" aria-hidden="true"></span>
+      <h3></h3>
+      <p class="details"></p>
+    </article>
+  </section>
+  <p class="result" id="result" aria-live="polite">Five movies enter. Pick which one stays in the arena.</p>
+  <p class="survivors" id="survivors"><strong>5</strong> movies still in the battle</p>
+  <section class="taste" id="taste" aria-labelledby="taste-title" aria-live="polite" hidden>
+    <h2 id="taste-title">Your movie DNA</h2>
+    <p id="taste-summary"></p>
+    <p id="taste-personality"></p>
+    <p class="caveat">Just for fun: this is a playful reading of your movie picks, not a psychological assessment.</p>
+  </section>
+  <div class="round-controls">
+    <button class="reset" id="play-again" type="button" hidden>Play again</button>
+  </div>
+</main>
+<footer>Fan project, not affiliated with any studio. All titles and characters belong to their owners.</footer>
+<script>
+const arena = document.querySelector(".arena");
+const fighters = Array.from(document.querySelectorAll(".fighter"));
+const result = document.getElementById("result");
+const roundLabel = document.getElementById("round");
+const survivorsLabel = document.getElementById("survivors");
+const playAgainButton = document.getElementById("play-again");
+const tastePanel = document.getElementById("taste");
+const tasteSummary = document.getElementById("taste-summary");
+const tastePersonality = document.getElementById("taste-personality");
+const movies = [
+  { title: "The Batman", mark: "BAT", setting: "Gotham", year: "2022", details: "Dark mystery · Crime thriller", color: "#ad242b", image: "b1.jpg", tastes: ["mystery", "intensity"] },
+  { title: "Interstellar", mark: "∞", setting: "Beyond the stars", year: "2014", details: "Space epic · Science fiction", color: "#d1833b", image: "Intersteller.jpg", tastes: ["wonder", "big ideas"] },
+  { title: "Spider-Man: Brand New Day", mark: "SPIDEY", setting: "New York", year: "2026", details: "Superhero · Action", color: "#c62e38", image: "spiderman brand new day.jpg", tastes: ["action", "heart"] },
+  { title: "The Odyssey", mark: "ODYSSEY", setting: "Across the seas", year: "2026", details: "Mythic epic · Adventure", color: "#328199", image: "the odessy.jpg", tastes: ["adventure", "myth"] },
+  { title: "Man of Steel", mark: "S", setting: "Metropolis", year: "2013", details: "Superhero epic · Sci-fi action", color: "#1769a1", image: "Man of Steel.jpg", tastes: ["heroism", "wonder"] },
+];
+const tasteDescriptions = {
+  mystery: "enjoy piecing clues together and looking beneath the surface",
+  intensity: "appreciate bold moods and serious, high-stakes stories",
+  wonder: "enjoy exploring big ideas and imaginative possibilities",
+  "big ideas": "enjoy stories that leave you thinking beyond the credits",
+  action: "enjoy high-energy stories and decisive characters",
+  heart: "value warmth, connection, and emotional storytelling",
+  adventure: "enjoy exploring the unknown and discovering new worlds",
+  myth: "enjoy legendary stories and timeless themes",
+  heroism: "admire courage, hope, and characters who rise to a challenge",
+};
+let sides = [0, 1];
+let nextMovieIndex = 2;
+let survivorSide = null;
+const chosenMovies = [];
+
+function renderFighter(fighter, movie) {
+  fighter.dataset.movie = movie.title;
+  fighter.dataset.mark = movie.mark;
+  fighter.style.setProperty("--accent", movie.color);
+  let artwork = fighter.querySelector(".fighter-art");
+  if (!artwork) {
+    artwork = document.createElement("img");
+    artwork.className = "fighter-art";
+    artwork.alt = "";
+    artwork.setAttribute("aria-hidden", "true");
+    fighter.prepend(artwork);
+  }
+  artwork.src = `images/${movie.image}`;
+  fighter.querySelector(".tag").textContent = `${movie.setting} · ${movie.year}`;
+  fighter.querySelector(".mark").textContent = movie.mark;
+  fighter.querySelector("h3").textContent = movie.title;
+  fighter.querySelector(".details").textContent = movie.details;
+  fighter.setAttribute("aria-label", `Choose ${movie.title}, ${movie.details}`);
+  fighter.setAttribute("aria-pressed", "false");
+}
+
+function renderMatch() {
+  fighters.forEach((fighter, index) => {
+    renderFighter(fighter, movies[sides[index]]);
+    fighter.classList.remove("survivor", "champion");
+  });
+  if (survivorSide !== null) {
+    fighters[survivorSide].classList.add("survivor");
+    fighters[survivorSide].setAttribute("aria-pressed", "true");
+  }
+  roundLabel.textContent = `Survivor battle · Match ${nextMovieIndex - 1} of ${movies.length - 1}`;
+}
+
+function finishBattle() {
+  const winner = movies[sides[survivorSide]];
+  const winnerCard = fighters[survivorSide];
+  winnerCard.classList.add("champion");
+  winnerCard.setAttribute("aria-pressed", "true");
+  arena.classList.add("final");
+  roundLabel.textContent = "Battle complete · Last movie standing";
+  result.textContent = `${winner.title} survives all challengers and wins!`;
+  survivorsLabel.innerHTML = `<strong>1</strong> champion remains`;
+  tasteSummary.textContent = `Your picks: ${chosenMovies.map((movie) => movie.title).join(" → ")}. Your final choice is ${winner.title}.`;
+  const profile = winner.tastes.map((taste) => tasteDescriptions[taste]).filter(Boolean).join(" and ");
+  tastePersonality.textContent = profile
+    ? `Based on these movie choices, you seem to ${profile}.`
+    : "Based on these movie choices, you seem to enjoy a mix of different kinds of stories.";
+  tastePanel.hidden = false;
+  playAgainButton.hidden = false;
+}
+
+function chooseMovie(fighter) {
+  if (arena.classList.contains("final")) return;
+  const winnerSide = fighters.indexOf(fighter);
+  chosenMovies.push(movies[sides[winnerSide]]);
+  survivorSide = winnerSide;
+  fighter.setAttribute("aria-pressed", "true");
+
+  if (nextMovieIndex === movies.length) {
+      finishBattle();
+      return;
+  }
+
+  const loserSide = 1 - winnerSide;
+  const eliminatedMovie = movies[sides[loserSide]];
+  const challenger = movies[nextMovieIndex];
+  sides[loserSide] = nextMovieIndex;
+  nextMovieIndex += 1;
+  renderMatch();
+  const remaining = movies.length - nextMovieIndex + 2;
+  survivorsLabel.innerHTML = `<strong>${remaining}</strong> ${remaining === 1 ? "movie" : "movies"} still in the battle`;
+  result.textContent = `${eliminatedMovie.title} is out. ${movies[sides[survivorSide]].title} stays on the ${survivorSide === 0 ? "left" : "right"}; ${challenger.title} takes the other side.`;
+  fighters[loserSide].focus();
+}
+
+fighters.forEach((fighter) => {
+  fighter.addEventListener("click", () => chooseMovie(fighter));
+  fighter.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      chooseMovie(fighter);
+    }
+  });
+});
+
+playAgainButton.addEventListener("click", () => {
+  sides = [0, 1];
+  nextMovieIndex = 2;
+  survivorSide = null;
+  chosenMovies.length = 0;
+  arena.classList.remove("final");
+  renderMatch();
+  survivorsLabel.innerHTML = `<strong>${movies.length}</strong> movies still in the battle`;
+  tastePanel.hidden = true;
+  playAgainButton.hidden = true;
+  fighters[0].focus();
+});
+
+renderMatch();
+</script>
+<script src="account-nav.js"></script></body>
+</html>

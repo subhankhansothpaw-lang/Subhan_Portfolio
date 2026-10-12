@@ -1,0 +1,391 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#080b10">
+<title>Login / Sign Up</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=Libre+Franklin:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#080b10;--ink:#e9ecef;--mute:#9aa4ad;--sig:#f2c230;--line:#2a323c;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font:400 16px/1.6 "Libre Franklin",system-ui,sans-serif}
+#bg{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}
+.veil{position:fixed;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(8,11,16,.63),rgba(8,11,16,.83) 58%,rgba(8,11,16,.97))}
+header{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:20px clamp(20px,5vw,64px)}
+header b{font:900 22px "Big Shoulders Display",sans-serif;letter-spacing:.04em}
+nav{display:flex;flex-wrap:nowrap;align-items:center;justify-content:flex-end;gap:clamp(8px,1.2vw,16px);min-width:0}
+nav a{flex:0 0 auto;color:var(--ink);text-decoration:none;font-size:clamp(11px,.95vw,14px);white-space:nowrap}
+nav a:hover,nav a:focus-visible,nav a[aria-current=page]{color:var(--sig);outline:none}
+main{min-height:calc(100vh - 150px);display:grid;place-items:center;padding:32px 20px 70px}
+.account{width:min(100%,480px);padding:clamp(24px,6vw,44px);border:1px solid rgba(255,255,255,.2);border-radius:22px;background:linear-gradient(145deg,rgba(14,18,26,.56),rgba(8,11,16,.4));box-shadow:0 28px 80px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.1);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
+.eyebrow{color:var(--sig);font-size:11px;font-weight:600;letter-spacing:.19em;text-transform:uppercase}
+h1{font:900 clamp(48px,10vw,68px)/.9 "Big Shoulders Display",sans-serif;text-transform:uppercase;margin:13px 0 8px}
+.intro{color:var(--mute);font-size:14px;margin:0 0 24px}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:5px;margin-bottom:24px;background:rgba(0,0,0,.32);border:1px solid rgba(255,255,255,.08);border-radius:12px}
+.tabs button{cursor:pointer;border:0;border-radius:8px;padding:11px;background:transparent;color:var(--mute);font:500 14px "Libre Franklin",sans-serif}
+.tabs button[aria-selected=true]{background:var(--sig);color:#101114}
+.tabs button:focus-visible,.submit:focus-visible,.password-toggle:focus-visible{outline:2px solid #fff;outline-offset:3px}
+form[hidden]{display:none}
+label{display:block;margin:0 0 16px;color:#d5dae0;font-size:13px;font-weight:500}
+input{display:block;width:100%;margin-top:7px;padding:13px 14px;border:1px solid rgba(255,255,255,.17);border-radius:10px;background:rgba(4,7,12,.7);color:var(--ink);font:400 15px "Libre Franklin",sans-serif}
+input::placeholder{color:#717d88}
+input:focus{outline:2px solid var(--sig);outline-offset:1px;border-color:transparent}
+.password-wrap{position:relative}
+.password-wrap input{padding-right:76px}
+.password-toggle{position:absolute;right:9px;top:50%;transform:translateY(-35%);cursor:pointer;border:0;background:transparent;color:var(--mute);font:500 12px "Libre Franklin",sans-serif}
+.password-toggle:hover{color:var(--sig)}
+.submit{width:100%;cursor:pointer;margin-top:7px;padding:14px 20px;border:0;border-radius:999px;background:var(--sig);color:#111;font:600 14px "Libre Franklin",sans-serif;transition:transform .2s,filter .2s}
+.submit:hover{transform:translateY(-2px);filter:brightness(1.06)}
+.notice{min-height:23px;margin:15px 0 0;color:var(--mute);font-size:12px;text-align:center}
+.notice[role=status]:not(:empty){color:#e4c75f}
+.demo-note{border-top:1px solid rgba(255,255,255,.1);padding-top:15px;margin:17px 0 0;color:var(--mute);font-size:11px;text-align:center}
+.profile[hidden]{display:none}
+.profile-status{margin:0 0 18px;color:var(--sig);font-weight:500}
+.profile h2{font:900 28px/1 "Big Shoulders Display",sans-serif;text-transform:uppercase;margin:26px 0 12px}
+.profile .signout{display:block;margin:18px auto 0}
+footer{padding:24px clamp(20px,5vw,64px);border-top:1px solid var(--line);color:var(--mute);font-size:13px}
+@media(max-width:760px){header{align-items:flex-start;flex-direction:column;gap:12px}nav{width:100%;justify-content:flex-start;overflow-x:auto;padding:0 0 5px;scrollbar-width:none}nav::-webkit-scrollbar{display:none}nav a{font-size:13px}}
+@media(max-width:600px){.account{border-radius:16px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important}}
+header{display:flex!important;flex-wrap:nowrap!important;justify-content:space-between;align-items:center;gap:16px;min-width:0}header>b{flex:0 0 auto;white-space:nowrap;font-size:22px!important}nav{display:flex!important;flex:0 1 auto;flex-wrap:nowrap!important;justify-content:flex-end;align-items:center;gap:8px!important;width:auto!important;min-width:0;overflow-x:auto;scrollbar-width:none}nav::-webkit-scrollbar{display:none}nav a{flex:0 0 auto!important;min-width:0!important;margin:0!important;padding:4px 6px!important;text-align:center!important;font-size:14px!important;line-height:1.4!important;white-space:nowrap!important}@media(max-width:760px){header{flex-direction:row!important;align-items:center!important}}</style>
+<link rel="stylesheet" href="navbar.css">
+</head>
+<body>
+<video id="bg" autoplay muted loop playsinline aria-hidden="true">
+  <source src="images/ANDRESSAN956_ssspin.io_1791721632.mp4" type="video/mp4">
+</video>
+<div class="veil"></div>
+<header>
+  <b>MOVIE NIGHT</b>
+  <nav aria-label="Main navigation">
+    <a href="Movies (1).html">Movies</a>
+    <a href="Gaming.html">Gaming</a>
+    <a href="Anime.html">Anime</a>
+    <a href="My DNA.html">My DNA</a>
+    <a href="Login.html" aria-current="page">Login / Sign Up</a>
+  </nav>
+</header>
+<main>
+  <section class="account" aria-labelledby="title">
+    <span class="eyebrow">Your seat is waiting</span>
+    <h1 id="title">Welcome back</h1>
+    <p class="intro" id="intro">Log in to your movie night account.</p>
+    <div class="tabs" role="tablist" aria-label="Account options">
+      <button type="button" id="login-tab" role="tab" aria-selected="true" aria-controls="login-form">Log in</button>
+      <button type="button" id="signup-tab" role="tab" aria-selected="false" aria-controls="signup-form" tabindex="-1">Sign up</button>
+    </div>
+    <form id="login-form" aria-labelledby="login-tab">
+      <label for="login-email">Email address
+        <input id="login-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
+      </label>
+      <label for="login-password">Password
+        <span class="password-wrap"><input id="login-password" name="password" type="password" autocomplete="current-password" placeholder="Your password" required><button class="password-toggle" type="button" aria-label="Show password" aria-pressed="false">Show</button></span>
+      </label>
+      <button class="submit" type="submit">Log in</button>
+      <p class="notice" id="login-notice" role="status" aria-live="polite"></p>
+    </form>
+    <form id="signup-form" aria-labelledby="signup-tab" hidden>
+      <label for="signup-name">Your name
+        <input id="signup-name" name="name" type="text" autocomplete="name" placeholder="Alex" required>
+      </label>
+      <label for="signup-email">Email address
+        <input id="signup-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
+      </label>
+      <label for="signup-password">Create password
+        <span class="password-wrap"><input id="signup-password" name="password" type="password" autocomplete="new-password" minlength="8" placeholder="At least 8 characters" required><button class="password-toggle" type="button" aria-label="Show password" aria-pressed="false">Show</button></span>
+      </label>
+      <button class="submit" type="submit">Create account</button>
+      <p class="notice" id="signup-notice" role="status" aria-live="polite"></p>
+    </form>
+    <section class="profile" id="profile" aria-labelledby="profile-title" hidden>
+      <p class="profile-status" id="profile-status" role="status" aria-live="polite"></p>
+      <h2 id="profile-title">Account settings</h2>
+      <form id="name-form">
+        <label for="profile-name">Display name
+          <input id="profile-name" name="name" type="text" autocomplete="name" required>
+        </label>
+        <button class="submit" type="submit">Save name</button>
+        <p class="notice" id="name-notice" role="status" aria-live="polite"></p>
+      </form>
+      <h2>Change password</h2>
+      <form id="password-form">
+        <label for="current-password">Current password
+          <input id="current-password" name="currentPassword" type="password" autocomplete="current-password" required>
+        </label>
+        <label for="new-password">New password
+          <input id="new-password" name="newPassword" type="password" autocomplete="new-password" minlength="8" placeholder="At least 8 characters" required>
+        </label>
+        <button class="submit" type="submit">Update password</button>
+        <p class="notice" id="password-notice" role="status" aria-live="polite"></p>
+      </form>
+      <button class="reset signout" id="signout" type="button">Log out</button>
+    </section>
+    <p class="demo-note">Demo accounts are saved only in this browser. Passwords are stored as salted hashes, but browser storage is not suitable for sensitive or production accounts.</p>
+  </section>
+</main>
+<footer>Fan project, not affiliated with any studio. All titles and characters belong to their owners.</footer>
+<script>
+const tabs = [
+  { button: document.getElementById("login-tab"), form: document.getElementById("login-form"), title: "Welcome back", intro: "Log in to your movie night account." },
+  { button: document.getElementById("signup-tab"), form: document.getElementById("signup-form"), title: "Join the show", intro: "Create an account for your movie night." },
+];
+const heading = document.getElementById("title");
+const intro = document.getElementById("intro");
+const profile = document.getElementById("profile");
+const profileStatus = document.getElementById("profile-status");
+const accountStorageKey = "movieNightAccounts";
+const sessionStorageKey = "movieNightSession";
+const passwordIterations = 210000;
+
+function setActiveAccount(email) {
+  try {
+    localStorage.setItem(sessionStorageKey, email);
+  } catch {
+    throw new Error("Could not save your sign-in state in browser storage.");
+  }
+  window.dispatchEvent(new Event("movieNightAccountChanged"));
+}
+
+function getActiveAccount(accounts) {
+  let email;
+  try {
+    email = localStorage.getItem(sessionStorageKey);
+  } catch {
+    throw new Error("Browser storage is unavailable. Check this page's storage permissions.");
+  }
+  return accounts.find((account) => account.email === email);
+}
+
+function showProfile(account, message) {
+  tabs.forEach((tab) => {
+    tab.button.hidden = true;
+    tab.form.hidden = true;
+  });
+  profile.hidden = false;
+  document.querySelector(".tabs").hidden = true;
+  heading.textContent = `Hi, ${account.name}`;
+  intro.textContent = "Manage your movie night account.";
+  document.getElementById("profile-name").value = account.name;
+  profileStatus.textContent = message;
+}
+
+function showAccountForms() {
+  profile.hidden = true;
+  document.querySelector(".tabs").hidden = false;
+  tabs.forEach((tab) => { tab.button.hidden = false; });
+  selectTab(tabs[0], false);
+}
+
+function readAccounts() {
+  let savedAccounts;
+  try {
+    savedAccounts = localStorage.getItem(accountStorageKey);
+  } catch {
+    throw new Error("Browser storage is unavailable. Check this page's storage permissions.");
+  }
+  if (savedAccounts === null) return [];
+
+  let accounts;
+  try {
+    accounts = JSON.parse(savedAccounts);
+  } catch {
+    throw new Error("Saved account data could not be read. Clear this page's saved account data and try again.");
+  }
+  if (!Array.isArray(accounts)) {
+    throw new Error("Saved account data is invalid. Clear this page's saved account data and try again.");
+  }
+  return accounts;
+}
+
+function bytesToHex(bytes) {
+  return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+function hexToBytes(hex) {
+  if (!/^(?:[0-9a-f]{2})+$/i.test(hex)) throw new Error("Saved password data is invalid.");
+  return Uint8Array.from(hex.match(/.{2}/g), (byte) => Number.parseInt(byte, 16));
+}
+
+async function hashPassword(password, salt) {
+  if (!crypto.subtle) throw new Error("Secure password hashing is unavailable in this browser.");
+  const key = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(password),
+    "PBKDF2",
+    false,
+    ["deriveBits"],
+  );
+  const bits = await crypto.subtle.deriveBits(
+    { name: "PBKDF2", hash: "SHA-256", salt, iterations: passwordIterations },
+    key,
+    256,
+  );
+  return bytesToHex(new Uint8Array(bits));
+}
+
+function saveAccounts(accounts) {
+  try {
+    localStorage.setItem(accountStorageKey, JSON.stringify(accounts));
+  } catch {
+    throw new Error("Could not save the account. Browser storage may be full or unavailable.");
+  }
+}
+
+function selectTab(selectedTab, moveFocus) {
+  tabs.forEach((tab) => {
+    const selected = tab === selectedTab;
+    tab.button.setAttribute("aria-selected", String(selected));
+    tab.button.tabIndex = selected ? 0 : -1;
+    tab.form.hidden = !selected;
+    tab.form.querySelector(".notice").textContent = "";
+  });
+  heading.textContent = selectedTab.title;
+  intro.textContent = selectedTab.intro;
+  if (moveFocus) selectedTab.button.focus();
+}
+
+tabs.forEach((tab, index) => {
+  tab.button.addEventListener("click", () => selectTab(tab, false));
+  tab.button.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+      event.preventDefault();
+      selectTab(tabs[1 - index], true);
+    }
+  });
+  tab.form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const notice = tab.form.querySelector(".notice");
+    const submitButton = tab.form.querySelector(".submit");
+    submitButton.disabled = true;
+    notice.textContent = "";
+    try {
+      const formData = new FormData(tab.form);
+      const email = String(formData.get("email")).trim().toLowerCase();
+      const password = String(formData.get("password"));
+      const accounts = readAccounts();
+
+      if (tab.form.id === "signup-form") {
+        if (accounts.some((account) => account.email === email)) {
+          throw new Error("An account with this email already exists. Log in instead.");
+        }
+        const salt = crypto.getRandomValues(new Uint8Array(16));
+        const account = {
+          name: String(formData.get("name")).trim(),
+          email,
+          salt: bytesToHex(salt),
+          passwordHash: await hashPassword(password, salt),
+        };
+        accounts.push(account);
+        saveAccounts(accounts);
+        setActiveAccount(email);
+        tab.form.reset();
+        notice.textContent = "Account created! Your account is saved in this browser.";
+        heading.textContent = `Hi, ${account.name}`;
+        intro.textContent = "Your account is ready. Your name now appears in the navigation.";
+        return;
+      }
+
+      const account = accounts.find((item) => item.email === email);
+      if (!account) throw new Error("No account found for this email. Sign up first.");
+      const salt = hexToBytes(account.salt);
+      const passwordHash = await hashPassword(password, salt);
+      if (passwordHash !== account.passwordHash) throw new Error("Incorrect email or password.");
+      setActiveAccount(email);
+      tab.form.reset();
+      showProfile(account, `Welcome back, ${account.name}.`);
+    } catch (error) {
+      notice.textContent = error instanceof Error ? error.message : "Could not complete the account request.";
+    } finally {
+      submitButton.disabled = false;
+    }
+  });
+});
+
+document.getElementById("name-form").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const notice = document.getElementById("name-notice");
+  try {
+    const accounts = readAccounts();
+    const account = getActiveAccount(accounts);
+    if (!account) throw new Error("Your account is not signed in. Log in again.");
+    const name = document.getElementById("profile-name").value.trim();
+    if (!name) throw new Error("Enter a display name.");
+    account.name = name;
+    saveAccounts(accounts);
+    heading.textContent = `Hi, ${account.name}`;
+    profileStatus.textContent = "Your display name has been updated.";
+    notice.textContent = "Name saved.";
+    window.dispatchEvent(new Event("movieNightAccountChanged"));
+  } catch (error) {
+    notice.textContent = error instanceof Error ? error.message : "Could not update your name.";
+  }
+});
+
+document.getElementById("password-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const notice = document.getElementById("password-notice");
+  const submitButton = form.querySelector(".submit");
+  submitButton.disabled = true;
+  notice.textContent = "";
+  try {
+    const accounts = readAccounts();
+    const account = getActiveAccount(accounts);
+    if (!account) throw new Error("Your account is not signed in. Log in again.");
+    const formData = new FormData(form);
+    const currentPassword = String(formData.get("currentPassword"));
+    const currentHash = await hashPassword(currentPassword, hexToBytes(account.salt));
+    if (currentHash !== account.passwordHash) throw new Error("Current password is incorrect.");
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    account.salt = bytesToHex(salt);
+    account.passwordHash = await hashPassword(String(formData.get("newPassword")), salt);
+    saveAccounts(accounts);
+    form.reset();
+    notice.textContent = "Password updated.";
+  } catch (error) {
+    notice.textContent = error instanceof Error ? error.message : "Could not update your password.";
+  } finally {
+    submitButton.disabled = false;
+  }
+});
+
+document.getElementById("signout").addEventListener("click", () => {
+  try {
+    localStorage.removeItem(sessionStorageKey);
+    window.dispatchEvent(new Event("movieNightAccountChanged"));
+    document.getElementById("profile-status").textContent = "";
+    document.getElementById("name-notice").textContent = "";
+    document.getElementById("password-notice").textContent = "";
+    document.querySelector(".tabs").hidden = false;
+    showAccountForms();
+  } catch {
+    profileStatus.textContent = "Could not log out because browser storage is unavailable.";
+  }
+});
+
+try {
+  const activeAccount = getActiveAccount(readAccounts());
+  if (window.location.hash === "#account" && activeAccount) {
+    showProfile(activeAccount, `Welcome back, ${activeAccount.name}.`);
+  }
+} catch (error) {
+  document.getElementById("login-notice").textContent = error instanceof Error
+    ? error.message
+    : "Could not load the account.";
+}
+
+document.querySelectorAll(".password-toggle").forEach((button) => {
+  button.addEventListener("click", () => {
+    const input = button.parentElement.querySelector("input");
+    const showing = input.type === "password";
+    input.type = showing ? "text" : "password";
+    button.textContent = showing ? "Hide" : "Show";
+    button.setAttribute("aria-label", `${showing ? "Hide" : "Show"} password`);
+    button.setAttribute("aria-pressed", String(showing));
+  });
+});
+</script>
+<script src="account-nav.js"></script></body>
+</html>
